@@ -8,7 +8,8 @@ enum MyEnum {
     D {
         hello: u32,
         world: String,
-    }
+    },
+    E
 }
 
 fn main() {
@@ -21,6 +22,9 @@ fn main() {
     unsafe {
         dbg!(std::mem::transmute::<MyEnum, [u32;8]>(MyEnum::C(123, 5, 6, 7)))
     };
+    unsafe {
+        dbg!(std::mem::transmute::<MyEnum, [u32;8]>(MyEnum::E))
+    };
 
     // dbg!(Enum::A(1).variant_idx());
     // dbg!(Enum::B("hello".to_string()).variant_idx());
@@ -30,5 +34,6 @@ fn main() {
     dbg!(MyEnum::size_of_variant(1));
     dbg!(MyEnum::size_of_variant(2));
     dbg!(MyEnum::size_of_variant(3));
+    dbg!(MyEnum::size_of_variant(4));
     dbg!("done:)");
 }
