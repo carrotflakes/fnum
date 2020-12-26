@@ -122,8 +122,7 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
                 fn right_pointer<T>(t: &T) -> usize {
                     unsafe {(t as *const T).offset(1) as usize}
                 }
-                use once_cell::sync::Lazy;
-                static TABLE: Lazy<[usize; #variant_num]> = Lazy::new(|| [#(#make_table),*]);
+                static TABLE: fnum::Lazy<[usize; #variant_num]> = fnum::Lazy::new(|| [#(#make_table),*]);
                 (*TABLE)[idx]
             }
         }

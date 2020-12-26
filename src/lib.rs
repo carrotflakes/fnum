@@ -1,6 +1,8 @@
 extern crate fnum_derive;
+extern crate once_cell;
 
 pub use fnum_derive::Fnum;
+pub use once_cell::sync::Lazy;
 
 pub trait Fnum {
     fn variant_count() -> usize;
