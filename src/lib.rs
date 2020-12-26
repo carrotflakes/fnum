@@ -1,3 +1,7 @@
+extern crate fnum_derive;
+
+pub use fnum_derive::Fnum;
+
 pub trait Fnum {
     fn variant_count() -> usize;
     fn variant_idx(&self) -> usize;
