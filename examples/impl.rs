@@ -33,21 +33,50 @@ impl Fnum for Enum {
     }
 
     fn size_of_variant(idx: usize) -> usize {
-        pub fn pointer<T>(t: &T) -> usize {
-            t as *const _ as usize
-        }
-        pub fn right_pointer<T>(t: &T) -> usize {
-            unsafe {(t as *const T).offset(1) as usize}
-        }
-        let e = unsafe { Self::uninit_variant(idx) };
-        let size = match &e {
-            Enum::A(x) => [right_pointer(x)].iter().max().unwrap() - pointer(&e),
-            Enum::B(x) => [right_pointer(x)].iter().max().unwrap() - pointer(&e),
-            Enum::C(x, y) => [right_pointer(x), right_pointer(y)].iter().max().unwrap() - pointer(&e),
-            Enum::D(x, y) => [right_pointer(x), right_pointer(y)].iter().max().unwrap() - pointer(&e),
-        };
-        std::mem::forget(e);
-        size
+        use once_cell::sync::Lazy;
+        static TABLE: Lazy<[usize; 4]> = Lazy::new(|| {
+            pub fn pointer<T>(t: &T) -> usize {
+                t as *const _ as usize
+            }
+            pub fn right_pointer<T>(t: &T) -> usize {
+                unsafe {(t as *const T).offset(1) as usize}
+            }
+            [
+                {
+                    let e = unsafe { Enum::uninit_variant(0) };
+                    let size = if let Enum::A(x) = &e {
+                        [right_pointer(x)].iter().max().unwrap() - pointer(&e)
+                    } else {unreachable!()};
+                    std::mem::forget(e);
+                    size
+                },
+                {
+                    let e = unsafe { Enum::uninit_variant(1) };
+                    let size = if let Enum::B(x) = &e {
+                        [right_pointer(x)].iter().max().unwrap() - pointer(&e)
+                    } else {unreachable!()};
+                    std::mem::forget(e);
+                    size
+                },
+                {
+                    let e = unsafe { Enum::uninit_variant(2) };
+                    let size = if let Enum::C(x, y) = &e {
+                        [right_pointer(x), right_pointer(y)].iter().max().unwrap() - pointer(&e)
+                    } else {unreachable!()};
+                    std::mem::forget(e);
+                    size
+                },
+                {
+                    let e = unsafe { Enum::uninit_variant(3) };
+                    let size = if let Enum::D(x, y) = &e {
+                        [right_pointer(x), right_pointer(y)].iter().max().unwrap() - pointer(&e)
+                    } else {unreachable!()};
+                    std::mem::forget(e);
+                    size
+                },
+            ]
+        });
+        (*TABLE)[idx]
     }
 }
 

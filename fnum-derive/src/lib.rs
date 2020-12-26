@@ -33,34 +33,6 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
         }
     }).collect::<Vec<_>>();
 
-    let size_of_variant_arms = variants.iter().map(|variant| {
-        let ident = &variant.ident;
-        match &variant.fields {
-            syn::Fields::Named(fields) => {
-                let field_idents = fields.named.iter().map(|field| field.ident.clone().unwrap()).collect::<Vec<_>>();
-                let pointers = field_idents.iter().map(|i| quote! {right_pointer(#i)}).collect::<Vec<_>>();
-                quote! {
-                    #enum_name::#ident{#(#field_idents),*} => {[#(#pointers),*].iter().max().unwrap() - pointer(&e)}
-                }
-            }
-            syn::Fields::Unnamed(fields) => {
-                let field_idents = fields.unnamed.iter().enumerate().map(|(i, _)| {
-                    quote::format_ident!("field{}", i)
-                }).collect::<Vec<_>>();
-                let pointers = field_idents.iter().map(|i| quote! {right_pointer(#i)}).collect::<Vec<_>>();
-                quote! {
-                    #enum_name::#ident(#(#field_idents),*) => {[#(#pointers),*].iter().max().unwrap() - pointer(&e)}
-                }
-            }
-            syn::Fields::Unit => {
-                quote! {
-                    #enum_name::#ident => {2} // dame kamo
-                }
-            }
-        }
-    }).collect::<Vec<_>>();
-
-
     let uninit_variant_arms = variants.iter().enumerate().map(|(i, variant)| {
         let ident = &variant.ident;
         match &variant.fields {
@@ -89,6 +61,42 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
         }
     }).collect::<Vec<_>>();
 
+    let make_table = variants.iter().enumerate().map(|(i, variant)| {
+        let ident = &variant.ident;
+        let arm = match &variant.fields {
+            syn::Fields::Named(fields) => {
+                let field_idents = fields.named.iter().map(|field| field.ident.clone().unwrap()).collect::<Vec<_>>();
+                let pointers = field_idents.iter().map(|i| quote! {right_pointer(#i)}).collect::<Vec<_>>();
+                quote! {
+                    #enum_name::#ident{#(#field_idents),*} => {[#(#pointers),*].iter().max().unwrap() - pointer(&e)}
+                }
+            }
+            syn::Fields::Unnamed(fields) => {
+                let field_idents = fields.unnamed.iter().enumerate().map(|(i, _)| {
+                    quote::format_ident!("field{}", i)
+                }).collect::<Vec<_>>();
+                let pointers = field_idents.iter().map(|i| quote! {right_pointer(#i)}).collect::<Vec<_>>();
+                quote! {
+                    #enum_name::#ident(#(#field_idents),*) => {[#(#pointers),*].iter().max().unwrap() - pointer(&e)}
+                }
+            }
+            syn::Fields::Unit => {
+                quote! {
+                    #enum_name::#ident => {2} // dame kamo
+                }
+            }
+        };
+        quote! {{
+            let e = unsafe { #enum_name::uninit_variant(#i) };
+            let size = match &e {
+                #arm,
+                _ => unreachable!()
+            };
+            std::mem::forget(e);
+            size
+        }}
+    }).collect::<Vec<_>>();
+
     let variant_num = variants.len();
     let gen = quote! {
         impl fnum::Fnum for #enum_name {
@@ -114,12 +122,9 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
                 fn right_pointer<T>(t: &T) -> usize {
                     unsafe {(t as *const T).offset(1) as usize}
                 }
-                let e = unsafe { Self::uninit_variant(idx) };
-                let size = match &e {
-                    #(#size_of_variant_arms),*
-                };
-                std::mem::forget(e);
-                size
+                use once_cell::sync::Lazy;
+                static TABLE: Lazy<[usize; #variant_num]> = Lazy::new(|| [#(#make_table),*]);
+                (*TABLE)[idx]
             }
         }
     };
