@@ -12,7 +12,7 @@ impl Fnum for Enum {
         4
     }
 
-    fn variant_idx(&self) -> usize {
+    fn variant_index(&self) -> usize {
         match self {
             Enum::A(_) => 0,
             Enum::B(_) => 1,

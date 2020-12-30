@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 [[package]]
 name = "fnum"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "fnum-derive",
  "once_cell",
@@ -10,7 +10,7 @@ dependencies = [
 
 [[package]]
 name = "fnum-derive"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "quote",
  "syn",

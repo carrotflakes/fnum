@@ -40,7 +40,7 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
                 let inits = fields.named.iter().map(|field| {
                     let name = field.ident.clone().unwrap(); // unwrap daijoubu?
                     quote! {
-                        #name: std::mem::MaybeUninit::uninit().assume_init()
+                        #name: ::std::mem::MaybeUninit::uninit().assume_init()
                     }
                 }).collect::<Vec<_>>();
                 quote! {
@@ -48,7 +48,7 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
                 }
             }
             syn::Fields::Unnamed(fields) => {
-                let inits = fields.unnamed.iter().map(|_| quote! { std::mem::MaybeUninit::uninit().assume_init() }).collect::<Vec<_>>();
+                let inits = fields.unnamed.iter().map(|_| quote! { ::std::mem::MaybeUninit::uninit().assume_init() }).collect::<Vec<_>>();
                 quote! {
                     #i => #enum_name::#ident(#(#inits),*)
                 }
@@ -92,18 +92,18 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
                 #arm,
                 _ => unreachable!()
             };
-            std::mem::forget(e);
+            ::std::mem::forget(e);
             size
         }}
     }).collect::<Vec<_>>();
 
     let variant_num = variants.len();
     let gen = quote! {
-        impl fnum::Fnum for #enum_name {
+        impl ::fnum::Fnum for #enum_name {
             fn variant_count() -> usize {
                 #variant_num
             }
-            fn variant_idx(&self) -> usize {
+            fn variant_index(&self) -> usize {
                 match self {
                     #(#variant_idx_arms),*
                 }
@@ -122,7 +122,7 @@ pub fn derive_fnum(input: TokenStream) -> TokenStream {
                 fn right_pointer<T>(t: &T) -> usize {
                     unsafe {(t as *const T).offset(1) as usize}
                 }
-                static TABLE: fnum::Lazy<[usize; #variant_num]> = fnum::Lazy::new(|| [#(#make_table),*]);
+                static TABLE: ::fnum::__Lazy<[usize; #variant_num]> = ::fnum::__Lazy::new(|| [#(#make_table),*]);
                 (*TABLE)[idx]
             }
         }

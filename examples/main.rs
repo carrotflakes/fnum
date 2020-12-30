@@ -29,7 +29,7 @@ fn main() {
     // dbg!(Enum::A(1).variant_idx());
     // dbg!(Enum::B("hello".to_string()).variant_idx());
     dbg!(MyEnum::variant_count()); // => 4
-    dbg!(MyEnum::A(123).variant_idx()); // => 0 (index of variant)
+    dbg!(MyEnum::A(123).variant_index()); // => 0 (index of variant)
     dbg!(MyEnum::size_of_variant(0));
     dbg!(MyEnum::size_of_variant(1));
     dbg!(MyEnum::size_of_variant(2));
