@@ -10,5 +10,5 @@ readme = "README.md"
 categories = ["memory-management"]
 
 [dependencies]
-fnum-derive = { path = "./fnum-derive" }
+fnum-derive = "0.0"
 once_cell = "1.5"

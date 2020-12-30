@@ -1,30 +1,27 @@
 # fnum
-Fnum is an utility trait for enum.
+Fnum is an utility trait for enum, that provides `size_of_variant` method.
+`size_of_variant` returns the minimum size that specified variant requiring.
 
-## Usage (require fnum_derive crate)
+## Usage
 ``` rust
 use fnum::Fnum;
 
-#[derive(fnum_derive::Fnum)]
+#[derive(Fnum)]
 enum MyEnum {
     A(u64),
     B(String),
     C(u64, u32, u32, u32),
     D {
-        hello: u32,
-        world: String,
+        foo: u32,
+        bar: String,
     }
 }
 
 fn main() {
-    dbg!(MyEnum::variant_count()); // => 4
-
-    dbg!(MyEnum::A(0).variant_idx()); // => 0 (index of variant)
-
-    dbg!(MyEnum::size_of_variant(0)); // => 16 (minimum bytes required by `MyEnum::A(..)`)
-    dbg!(MyEnum::size_of_variant(1)); // => 32 (minimum bytes required by `MyEnum::B(..)`)
-    dbg!(MyEnum::size_of_variant(2)); // => 24 (minimum bytes required by `MyEnum::C(..)`)
-    dbg!(MyEnum::size_of_variant(3)); // => 32 (minimum bytes required by `MyEnum::D{..}`)
+    dbg!(MyEnum::size_of_variant(0)); // => 16 (bytes required by `MyEnum::A(..)`)
+    dbg!(MyEnum::size_of_variant(1)); // => 32 (bytes required by `MyEnum::B(..)`)
+    dbg!(MyEnum::size_of_variant(2)); // => 24 (bytes required by `MyEnum::C(..)`)
+    dbg!(MyEnum::size_of_variant(3)); // => 32 (bytes required by `MyEnum::D{..}`)
 }
 ```
 

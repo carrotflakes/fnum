@@ -11,6 +11,8 @@ dependencies = [
 [[package]]
 name = "fnum-derive"
 version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed3840fc54f8a9c27e8bf77e43f216c4245797cbfef41a6f4aee8515737018e3"
 dependencies = [
  "quote",
  "syn",
