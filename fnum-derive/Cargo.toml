@@ -1,12 +1,15 @@
 [package]
 name = "fnum-derive"
+description = "fnum derive macro"
 version = "0.0.1"
 authors = ["carrotflakes <carrotflakes@gmail.com>"]
 edition = "2018"
+repository = "https://github.com/carrotflakes/fnum"
+license = "MIT"
 
 [lib]
 proc-macro = true
 
 [dependencies]
 quote = "1.0.8"
-syn = { version = "1.0.14", features = ["full", "extra-traits"] }
+syn = { version = "1.0.14", features = ["full"] }
