@@ -1,5 +1,6 @@
 [package]
 name = "fnum"
+description = "An utility trait for enum"
 version = "0.0.1"
 authors = ["carrotflakes <carrotflakes@gmail.com>"]
 edition = "2018"
