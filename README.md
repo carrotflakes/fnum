@@ -31,6 +31,9 @@ fn main() {
 }
 ```
 
+## Related products
+- [fnumbuf](https://github.com/carrotflakes/fnumbuf)
+
 ## Author
 
 * carrotflakes (carrotflakes@gmail.com)
