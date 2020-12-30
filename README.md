@@ -2,6 +2,12 @@
 Fnum is an utility trait for enum, that provides `size_of_variant` method.
 `size_of_variant` returns the minimum size that specified variant requiring.
 
+And fnum has some functions:
+
+- `variant_count`: Returns the number of variants the enum has.
+- `variant_index`: Returns the index of variant.
+- `uninit_variant`: Create an enum value that has uninitialized fields.
+
 ## Usage
 ``` rust
 use fnum::Fnum;
